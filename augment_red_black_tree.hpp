@@ -1,5 +1,5 @@
-#ifndef _RED_BLACK_TREE_HPP
-#define _RED_BLACK_TREE_HPP
+#ifndef _AUGMENT_RED_BLACK_TREE_HPP
+#define _AUGMENT_RED_BLACK_TREE_HPP
 
 #include <utility>
 #include <iterator>
@@ -8,7 +8,7 @@
 // ---------- declaration ----------
 
 template <class Key, class T>
-class RedBlackTree
+class AugmentRedBlackTree
 {
 public:
     typedef std::pair<const Key, T> ValueType;
@@ -25,30 +25,31 @@ private:
         Node* right;
         ValueType value;
         enum { BLACK, RED } color;
-        Node();
-        Node(const ValueType& value);
+        Node() {}
+        Node(const ValueType& value) : value(value) {}
     };
 
 public:
     class Iterator : public std::iterator<std::bidirectional_iterator_tag, ValueType>
     {
     public:
-        Iterator& operator++();
-        Iterator& operator--();
-        ValueType& operator*() const;
-        ValueType* operator->() const;
-        bool operator==(const Iterator& other) const;
-        bool operator!=(const Iterator& other) const;
-        Iterator();
+        Iterator& operator++() { node_ = tree_->TreeSuccessor(node_); return *this; }
+        Iterator& operator--() { node_ = tree_->TreePredecessor(node_); return *this; }
+        ValueType& operator*() const { return node_->value; }
+        ValueType* operator->() const { return &(node_->value); }
+        bool operator==(const Iterator& other) const { return node_ == other.node_; }
+        bool operator!=(const Iterator& other) const { return node_ != other.node_; }
+        Iterator() : node_(nullptr), tree_(nullptr) {}
     private:
-        friend class RedBlackTree<Key, T>;
-        Iterator(Node* node, RedBlackTree<Key, T>* tree);
+        friend class AugmentRedBlackTree<Key, T>;
+        Iterator(Node* node, AugmentRedBlackTree<Key, T>* tree) 
+            : node_(node), tree_(tree) {}
         Node* node_;
-        RedBlackTree<Key, T>* tree_;
+        AugmentRedBlackTree<Key, T>* tree_;
     };
 
-    RedBlackTree();
-    ~RedBlackTree();
+    AugmentRedBlackTree();
+    ~AugmentRedBlackTree();
     std::pair<Iterator, bool> Insert(const ValueType& value);
     void Delete(Iterator pos);
     void Clear();
@@ -81,57 +82,7 @@ private:
 // ---------- definition ----------
 
 template <class Key, class T>
-RedBlackTree<Key, T>::Node::Node() {}
-
-template <class Key, class T>
-RedBlackTree<Key, T>::Node::Node(const ValueType& value) : value(value) {}
-
-template <class Key, class T>
-RedBlackTree<Key, T>::Iterator::Iterator() : node_(nullptr), tree_(nullptr) {}
-
-template <class Key, class T>
-RedBlackTree<Key, T>::Iterator::Iterator(Node* node, RedBlackTree<Key, T>* tree) : node_(node), tree_(tree) {}
-
-template <class Key, class T>
-bool RedBlackTree<Key, T>::Iterator::operator==(const Iterator& other) const
-{
-    return node_ == other.node_;
-}
-
-template <class Key, class T>
-bool RedBlackTree<Key, T>::Iterator::operator!=(const Iterator& other) const
-{
-    return node_ != other.node_;
-}
-
-template <class Key, class T>
-typename RedBlackTree<Key, T>::ValueType& RedBlackTree<Key, T>::Iterator::operator*() const
-{
-    return node_->value;
-}
-
-template <class Key, class T>
-typename RedBlackTree<Key, T>::ValueType* RedBlackTree<Key, T>::Iterator::operator->() const
-{
-    return &(node_->value);
-}
-
-template <class Key, class T>
-typename RedBlackTree<Key, T>::Iterator& RedBlackTree<Key, T>::Iterator::operator++()
-{
-    node_ = tree_->TreeSuccessor(node_);
-    return *this;
-}
-
-template <class Key, class T>
-typename RedBlackTree<Key, T>::Iterator& RedBlackTree<Key, T>::Iterator::operator--()
-{
-    node_ = tree_->TreePredecessor(node_);
-    return *this;
-}
-
-template <class Key, class T>
-RedBlackTree<Key, T>::RedBlackTree()
+AugmentRedBlackTree<Key, T>::AugmentRedBlackTree()
 {
     nil_ = new Node();
     nil_->color = Node::BLACK;
@@ -139,14 +90,14 @@ RedBlackTree<Key, T>::RedBlackTree()
 }
 
 template <class Key, class T>
-RedBlackTree<Key, T>::~RedBlackTree()
+AugmentRedBlackTree<Key, T>::~AugmentRedBlackTree()
 {
     Clear();
     delete nil_;
 }
 
 template <class Key, class T>
-void RedBlackTree<Key, T>::LeftRotate(Node* subtree_root_node) 
+void AugmentRedBlackTree<Key, T>::LeftRotate(Node* subtree_root_node) 
 {
     Node* new_root;
     new_root = subtree_root_node->right;
@@ -165,7 +116,7 @@ void RedBlackTree<Key, T>::LeftRotate(Node* subtree_root_node)
 }
 
 template <class Key, class T>
-void RedBlackTree<Key, T>::RightRotate(Node* subtree_root_node) 
+void AugmentRedBlackTree<Key, T>::RightRotate(Node* subtree_root_node) 
 {
     Node* new_root;
     new_root = subtree_root_node->left;
@@ -184,7 +135,7 @@ void RedBlackTree<Key, T>::RightRotate(Node* subtree_root_node)
 }
 
 template <class Key, class T>
-typename RedBlackTree<Key, T>::Iterator RedBlackTree<Key, T>::Find(const Key& key)
+typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Find(const Key& key)
 {
     Node* now;
     now = root_;
@@ -201,7 +152,7 @@ typename RedBlackTree<Key, T>::Iterator RedBlackTree<Key, T>::Find(const Key& ke
 }
  
 template <class Key, class T>
-T& RedBlackTree<Key, T>::At(const Key& key)
+T& AugmentRedBlackTree<Key, T>::At(const Key& key)
 {
     Node* now;
     now = root_;
@@ -218,7 +169,7 @@ T& RedBlackTree<Key, T>::At(const Key& key)
 }
 
 template <class Key, class T>
-T& RedBlackTree<Key, T>::operator[](Key&& key)
+T& AugmentRedBlackTree<Key, T>::operator[](Key&& key)
 {
     Node *node, **now_ptr, *parent;
     parent = nil_;
@@ -243,7 +194,7 @@ T& RedBlackTree<Key, T>::operator[](Key&& key)
 }
 
 template <class Key, class T>
-std::pair<typename RedBlackTree<Key, T>::Iterator, bool> RedBlackTree<Key, T>::Insert(const ValueType& value)
+std::pair<typename AugmentRedBlackTree<Key, T>::Iterator, bool> AugmentRedBlackTree<Key, T>::Insert(const ValueType& value)
 {
     Node *node, **now_ptr, *parent;
     parent = nil_;
@@ -268,22 +219,22 @@ std::pair<typename RedBlackTree<Key, T>::Iterator, bool> RedBlackTree<Key, T>::I
 }
 
 template <class Key, class T>
-void RedBlackTree<Key, T>::InsertFixup(Node* node)
+void AugmentRedBlackTree<Key, T>::InsertFixup(Node* node)
 {
     Node *uncle, *grandparent;
-    void(RedBlackTree<Key, T>::*grandparent_rotate)(Node*);
+    void(AugmentRedBlackTree<Key, T>::*grandparent_rotate)(Node*);
     while (node->parent->color == Node::RED)
     {
         grandparent = node->parent->parent;
         if (node->parent == grandparent->left)
         {
             uncle = grandparent->right;
-            grandparent_rotate = &RedBlackTree<Key, T>::RightRotate;
+            grandparent_rotate = &AugmentRedBlackTree<Key, T>::RightRotate;
         }
         else
         {
             uncle = grandparent->left;
-            grandparent_rotate = &RedBlackTree<Key, T>::LeftRotate;
+            grandparent_rotate = &AugmentRedBlackTree<Key, T>::LeftRotate;
         }
         if (uncle->color == Node::RED)
         {
@@ -309,7 +260,7 @@ void RedBlackTree<Key, T>::InsertFixup(Node* node)
 }
 
 template <class Key, class T>
-void RedBlackTree<Key, T>::Transplant(Node* old_node, Node* new_node)
+void AugmentRedBlackTree<Key, T>::Transplant(Node* old_node, Node* new_node)
 {
     if (old_node->parent == nil_)
         root_ = new_node;
@@ -321,7 +272,7 @@ void RedBlackTree<Key, T>::Transplant(Node* old_node, Node* new_node)
 }
 
 template <class Key, class T>
-typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreeMinimum(Node* sub_tree_root)
+typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeMinimum(Node* sub_tree_root)
 {
     while (sub_tree_root->left != nil_)
         sub_tree_root = sub_tree_root->left;
@@ -329,7 +280,7 @@ typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreeMinimum(Node* sub
 }
 
 template <class Key, class T>
-typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreeMaximum(Node* sub_tree_root)
+typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeMaximum(Node* sub_tree_root)
 {
     while (sub_tree_root->right != nil_)
         sub_tree_root = sub_tree_root->right;
@@ -337,7 +288,7 @@ typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreeMaximum(Node* sub
 }
 
 template <class Key, class T>
-typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreeSuccessor(Node* node)
+typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeSuccessor(Node* node)
 {
     Node* parent;
     if (node->right != this->nil_)
@@ -352,7 +303,7 @@ typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreeSuccessor(Node* n
 }
 
 template <class Key, class T>
-typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreePredecessor(Node* node)
+typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreePredecessor(Node* node)
 {
     Node* parent;
     if (node->left)
@@ -367,7 +318,7 @@ typename RedBlackTree<Key, T>::Node* RedBlackTree<Key, T>::TreePredecessor(Node*
 }
 
 template <class Key, class T>
-void RedBlackTree<Key, T>::Delete(Iterator pos)
+void AugmentRedBlackTree<Key, T>::Delete(Iterator pos)
 {
     Node *old, *replaced, *replaced_replaced;
     bool is_black_deleted;
@@ -417,7 +368,7 @@ void RedBlackTree<Key, T>::Delete(Iterator pos)
 }
 
 template <class Key, class T>
-void RedBlackTree<Key, T>::DeleteFixup(Node* node)
+void AugmentRedBlackTree<Key, T>::DeleteFixup(Node* node)
 {
     Node* sibling;
     while (node != root_ && node->color == Node::BLACK)
@@ -489,7 +440,7 @@ void RedBlackTree<Key, T>::DeleteFixup(Node* node)
 }
 
 template <class Key, class T>
-void RedBlackTree<Key, T>::Clear()
+void AugmentRedBlackTree<Key, T>::Clear()
 {
     Node *now, *parent;
     if (root_ == nil_) return;
@@ -514,13 +465,13 @@ void RedBlackTree<Key, T>::Clear()
 }
 
 template <class Key, class T>
-typename RedBlackTree<Key, T>::Iterator RedBlackTree<Key, T>::Begin()
+typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Begin()
 {
     return Iterator(TreeMinimum(root_), this);
 }
 
 template <class Key, class T>
-typename RedBlackTree<Key, T>::Iterator RedBlackTree<Key, T>::End()
+typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::End()
 {
     return Iterator(nil_, this);
 }

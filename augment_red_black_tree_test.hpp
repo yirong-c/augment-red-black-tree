@@ -1,17 +1,17 @@
-#ifndef _RED_BLACK_TREE_TEST_HPP
-#define _RED_BLACK_TREE_TEST_HPP
+#ifndef _AUGMENT_RED_BLACK_TREE_TEST_HPP
+#define _AUGMENT_RED_BLACK_TREE_TEST_HPP
 
 #define RBT_TESTING
 
-#include "red_black_tree.hpp"
+#include "augment_red_black_tree.hpp"
 
 #include <iostream>
 
 template <class Key, class T>
-class RedBlackTreeTest : public RedBlackTree<Key, T>
+class AugmentRedBlackTreeTest : public AugmentRedBlackTree<Key, T>
 {
 public:
-    typedef typename RedBlackTree<Key, T>::Node RbtNode;
+    typedef typename AugmentRedBlackTree<Key, T>::Node RbtNode;
 
     bool CheckNodeValid(const RbtNode* node)
     {

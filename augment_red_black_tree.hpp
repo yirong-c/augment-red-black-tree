@@ -61,6 +61,7 @@ public:
     T& operator[](Key&& key);
     Iterator Select(size_t rank);
     size_t Rank(Iterator pos);
+    size_t Size();
 
 #ifdef RBT_TESTING
 protected:
@@ -606,5 +607,8 @@ size_t AugmentRedBlackTree<Key, T>::Rank(Node* node)
     }
     return rank;
 }
+
+template <class Key, class T>
+size_t AugmentRedBlackTree<Key, T>::Size() { return root_->size; }
 
 #endif

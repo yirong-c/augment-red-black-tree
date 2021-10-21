@@ -25,6 +25,7 @@ private:
         Node* right;
         ValueType value;
         enum { BLACK, RED } color;
+        size_t size;
         Node() {}
         Node(const ValueType& value) : value(value) {}
     };
@@ -58,6 +59,8 @@ public:
     Iterator Begin();
     Iterator End();
     T& operator[](Key&& key);
+    Iterator Select(size_t rank);
+    size_t Rank(Iterator pos);
 
 #ifdef RBT_TESTING
 protected:
@@ -73,7 +76,12 @@ private:
     Node* TreeSuccessor(Node* node);
     Node* TreePredecessor(Node* node);
     void DeleteFixup(Node* node);
-    
+    Node* Select(Node* subtree_root_node, size_t rank);
+    size_t Rank(Node* node);
+
+    void InsertFixSize(Node* node);
+    void DeleteFixSize(Node* node);
+
     Node* root_;
     Node* nil_;
 
@@ -86,6 +94,7 @@ AugmentRedBlackTree<Key, T>::AugmentRedBlackTree()
 {
     nil_ = new Node();
     nil_->color = Node::BLACK;
+    nil_->size = 0;
     root_ = nil_;
 }
 
@@ -113,6 +122,8 @@ void AugmentRedBlackTree<Key, T>::LeftRotate(Node* subtree_root_node)
         subtree_root_node->parent->right = new_root;
     new_root->left = subtree_root_node;
     subtree_root_node->parent = new_root;
+    new_root->size = subtree_root_node->size;
+    subtree_root_node->size = subtree_root_node->left->size + subtree_root_node->right->size + 1;
 }
 
 template <class Key, class T>
@@ -132,6 +143,8 @@ void AugmentRedBlackTree<Key, T>::RightRotate(Node* subtree_root_node)
         subtree_root_node->parent->right = new_root;
     new_root->right = subtree_root_node;
     subtree_root_node->parent = new_root;
+    new_root->size = subtree_root_node->size;
+    subtree_root_node->size = subtree_root_node->left->size + subtree_root_node->right->size + 1;
 }
 
 template <class Key, class T>
@@ -189,12 +202,14 @@ T& AugmentRedBlackTree<Key, T>::operator[](Key&& key)
     node->parent = parent;
     node->right = node->left = nil_;
     node->color = Node::RED;
+    InsertFixSize(node);
     InsertFixup(node);
     return node->value.second;
 }
 
 template <class Key, class T>
-std::pair<typename AugmentRedBlackTree<Key, T>::Iterator, bool> AugmentRedBlackTree<Key, T>::Insert(const ValueType& value)
+std::pair<typename AugmentRedBlackTree<Key, T>::Iterator, bool> 
+    AugmentRedBlackTree<Key, T>::Insert(const ValueType& value)
 {
     Node *node, **now_ptr, *parent;
     parent = nil_;
@@ -214,8 +229,23 @@ std::pair<typename AugmentRedBlackTree<Key, T>::Iterator, bool> AugmentRedBlackT
     node->parent = parent;
     node->right = node->left = nil_;
     node->color = Node::RED;
+    InsertFixSize(node);
     InsertFixup(node);
     return std::make_pair(Iterator(node, this), true);
+}
+
+template <class Key, class T>
+void AugmentRedBlackTree<Key, T>::InsertFixSize(Node* node)
+{
+    Node *now;
+    now = root_;
+    while (now != node)
+    {
+        ++now->size;
+        if (node->value.first < now->value.first) now = now->left;
+        else now = now->right;
+    }
+    now->size = 1;
 }
 
 template <class Key, class T>
@@ -352,19 +382,32 @@ void AugmentRedBlackTree<Key, T>::Delete(Iterator pos)
         else
         {
             Transplant(replaced, replaced_replaced);
+            replaced_replaced->size = replaced->size;
             replaced->right = old->right;
             replaced->right->parent = replaced;
         }
         Transplant(old, replaced);
+        replaced->size = old->size;
         replaced->left = old->left;
         replaced->left->parent = replaced;
         replaced->color = old->color;// this is why "is_black_deleted" need to re-assign in this case
     }
+    DeleteFixSize(replaced_replaced);
     if (is_black_deleted)
         // In order to maintain property 5,
         // "replaced_replaced" node has extra black (either "doubly black" or "red-and-black", contributes either 2 or 1)
         DeleteFixup(replaced_replaced);
     delete old;
+}
+
+template <class Key, class T>
+void AugmentRedBlackTree<Key, T>::DeleteFixSize(Node* node)
+{
+    while (node != root_)
+    {
+        node = node->parent;
+        --node->size;
+    }
 }
 
 template <class Key, class T>
@@ -474,6 +517,95 @@ template <class Key, class T>
 typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::End()
 {
     return Iterator(nil_, this);
+}
+
+// rank start by 1
+
+// recursive
+// template <class Key, class T>
+// typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Select(size_t rank)
+// {
+//     if (rank <= 0 || rank >= root_->size) throw std::out_of_range("invalid rank");
+//     return Iterator(Select(root_, rank), this);
+// }
+
+// template <class Key, class T>
+// typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::Select
+//     (Node* subtree_root_node, size_t rank)
+// {
+//     size_t root_rank;
+//     root_rank = subtree_root_node->left->size + 1;
+//     if (rank == root_rank) return subtree_root_node;
+//     else if (rank < root_rank) return Select(subtree_root_node->left, rank);
+//     else return Select(subtree_root_node->right, rank - root_rank);
+// }
+
+// nonrecursive
+template <class Key, class T>
+typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Select(size_t rank)
+{
+    return Iterator(Select(root_, rank), this);
+}
+
+template <class Key, class T>
+typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::Select
+    (Node* subtree_root_node, size_t rank)
+{
+    size_t root_rank;
+    root_rank = subtree_root_node->left->size + 1;
+    while (rank != root_rank)
+    {
+        if (rank < root_rank) 
+        {
+            subtree_root_node = subtree_root_node->left;
+        }
+        else 
+        {
+            subtree_root_node = subtree_root_node->right;
+            rank -= root_rank;
+        }
+        root_rank = subtree_root_node->left->size + 1;
+    }
+    return subtree_root_node;
+}
+
+// recursive
+// template <class Key, class T>
+// size_t AugmentRedBlackTree<Key, T>::Rank(Iterator pos)
+// {
+//     return Rank(pos.node_);
+// }
+
+// template <class Key, class T>
+// size_t AugmentRedBlackTree<Key, T>::Rank(Node* node)
+// {
+//     if (node == root_)
+//         return node->left->size + 1;
+//     else if (node == node->parent->left)
+//         return Rank(node->parent) - node->right->size - 1;
+//     else
+//         return Rank(node->parent) + node->left->size + 1;
+// }
+
+// nonrecursive
+template <class Key, class T>
+size_t AugmentRedBlackTree<Key, T>::Rank(Iterator pos)
+{
+    return Rank(pos.node_);
+}
+
+template <class Key, class T>
+size_t AugmentRedBlackTree<Key, T>::Rank(Node* node)
+{
+    size_t rank;
+    rank = node->left->size + 1;
+    while (node != root_)
+    {
+        if (node == node->parent->right) 
+            rank += (node->parent->left->size + 1);
+        node = node->parent;
+    }
+    return rank;
 }
 
 #endif

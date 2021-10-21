@@ -1,4 +1,4 @@
-# red black tree
+# augment red black tree
 
 This module is a part of [frc123/CLRS-code-solution](https://github.com/frc123/CLRS-code-solution)
 
@@ -6,9 +6,9 @@ This module is a part of [frc123/CLRS-code-solution](https://github.com/frc123/C
 
 ```bash
 .
-├── red_black_tree.hpp          # main part of red black tree
-├── red_black_tree_test.hpp     # auxiliary test functions
-└── red_black_tree_test.cpp     # test cases (catch2)
+├── augment_red_black_tree.hpp          # main part of red black tree
+├── augment_red_black_tree_test.hpp     # auxiliary test functions
+└── augment_red_black_tree_test.cpp     # test cases (catch2)
 ```
 
 ## Bibliography

@@ -7,7 +7,7 @@
 
 typedef AugmentRedBlackTreeTest<int, char> Tree;
 
-TEST_CASE("rbt", "[rbt]")
+TEST_CASE("osrbt", "[osrbt]")
 {
     Tree tree;
     std::pair<Tree::Iterator, bool> insert_result, insert_result2;
@@ -70,6 +70,19 @@ TEST_CASE("rbt", "[rbt]")
     REQUIRE(tree.Begin()->first == 10);
     REQUIRE(tree.Begin()->second == 'd');
 
+    REQUIRE(tree.Select(1) == tree.Find(10));
+    REQUIRE(tree.Select(2) == tree.Find(20));
+    REQUIRE(tree.Select(3) == tree.Find(30));
+    REQUIRE(tree.Select(4) == tree.Find(40));
+    REQUIRE(tree.Select(5) == tree.Find(50));
+    REQUIRE(tree.Select(6) == tree.Find(70));
+    REQUIRE(tree.Select(7) == tree.Find(100));
+
+    REQUIRE(tree.Rank(tree.Find(10)) == 1);
+    REQUIRE(tree.Rank(tree.Find(20)) == 2);
+    REQUIRE(tree.Rank(tree.Find(30)) == 3);
+    REQUIRE(tree.Rank(tree.Find(40)) == 4);
+    REQUIRE(tree.Rank(tree.Find(50)) == 5);
+    REQUIRE(tree.Rank(tree.Find(70)) == 6);
+    REQUIRE(tree.Rank(tree.Find(100)) == 7);
 }
-
-

@@ -55,6 +55,8 @@ public:
         now = this->TreeMinimum(this->root_);
         if (this->root_->color != RbtNode::BLACK || this->nil_->color != RbtNode::BLACK)
             return false;
+        if (this->nil_->size != 0)
+            return false;
         while (now != this->nil_)
         {
             //test node relationship
@@ -64,9 +66,17 @@ public:
             if (last_key_ptr && *last_key_ptr >= now->value.first)
                 return false;
             last_key_ptr = &now->value.first;
+            //test subtree size for order statistics
+            if (now->size != now->left->size + now->right->size + 1)
+                return false;
+            //next
             now = this->TreeSuccessor(now);
         }
         if (CheckRBSubtreeValid(this->root_) == -1)
+            return false;
+        if (this->root_->color != RbtNode::BLACK || this->nil_->color != RbtNode::BLACK)
+            return false;
+        if (this->nil_->size != 0)
             return false;
         return true;
     }

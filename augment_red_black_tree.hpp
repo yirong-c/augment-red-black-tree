@@ -382,7 +382,6 @@ void AugmentRedBlackTree<Key, T>::Delete(Iterator pos)
         else
         {
             Transplant(replaced, replaced_replaced);
-            replaced_replaced->size = replaced->size;
             replaced->right = old->right;
             replaced->right->parent = replaced;
         }

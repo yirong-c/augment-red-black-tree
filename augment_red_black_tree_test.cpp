@@ -7,7 +7,7 @@
 
 typedef AugmentRedBlackTreeTest<int, char> Tree;
 
-TEST_CASE("osrbt", "[osrbt]")
+TEST_CASE("osrbt")
 {
     Tree tree;
     std::pair<Tree::Iterator, bool> insert_result, insert_result2;
@@ -85,4 +85,33 @@ TEST_CASE("osrbt", "[osrbt]")
     REQUIRE(tree.Rank(tree.Find(50)) == 5);
     REQUIRE(tree.Rank(tree.Find(70)) == 6);
     REQUIRE(tree.Rank(tree.Find(100)) == 7);
+}
+
+TEST_CASE("check tree valid")
+{
+    Tree tree;
+    std::pair<Tree::Iterator, bool> insert_result;
+    insert_result = tree.Insert({200, 'a'});
+    tree.Insert({100, 'a'});
+    tree.Insert({300, 'a'});
+    tree.Insert({270, 'a'});
+    tree.Insert({350, 'a'});
+    tree.Insert({230, 'a'});
+    tree.Insert({280, 'a'});
+    tree.Insert({250, 'a'});
+    tree.Insert({240, 'a'});
+    tree.Insert({260, 'a'});
+    REQUIRE(tree.CheckTreeValid());
+    tree.Delete(insert_result.first);
+    REQUIRE(tree.CheckTreeValid());
+
+    REQUIRE(tree.Select(1) == tree.Find(100));
+    REQUIRE(tree.Select(2) == tree.Find(230));
+    REQUIRE(tree.Select(3) == tree.Find(240));
+    REQUIRE(tree.Select(4) == tree.Find(250));
+    REQUIRE(tree.Select(5) == tree.Find(260));
+    REQUIRE(tree.Select(6) == tree.Find(270));
+    REQUIRE(tree.Select(7) == tree.Find(280));
+    REQUIRE(tree.Select(8) == tree.Find(300));
+    REQUIRE(tree.Select(9) == tree.Find(350));
 }

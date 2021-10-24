@@ -1,17 +1,17 @@
-#ifndef _AUGMENT_RED_BLACK_TREE_TEST_HPP
-#define _AUGMENT_RED_BLACK_TREE_TEST_HPP
+#ifndef _ORDER_STATISTICS_TREE_TEST_HPP
+#define _ORDER_STATISTICS_TREE_TEST_HPP
 
 #define RBT_TESTING
 
-#include "augment_red_black_tree.hpp"
+#include "order_statistics_tree.hpp"
 
 #include <iostream>
 
 template <class Key, class T>
-class AugmentRedBlackTreeTest : public AugmentRedBlackTree<Key, T>
+class OrderStatisticsTreeTest : public OrderStatisticsTree<Key, T>
 {
 public:
-    typedef typename AugmentRedBlackTree<Key, T>::Node RbtNode;
+    typedef typename OrderStatisticsTree<Key, T>::Node RbtNode;
 
     bool CheckNodeValid(const RbtNode* node)
     {

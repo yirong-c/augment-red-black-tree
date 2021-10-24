@@ -1,5 +1,5 @@
-#ifndef _AUGMENT_RED_BLACK_TREE_HPP
-#define _AUGMENT_RED_BLACK_TREE_HPP
+#ifndef _ORDER_STATISTICS_TREE_HPP
+#define _ORDER_STATISTICS_TREE_HPP
 
 #include <utility>
 #include <iterator>
@@ -8,7 +8,7 @@
 // ---------- declaration ----------
 
 template <class Key, class T>
-class AugmentRedBlackTree
+class OrderStatisticsTree
 {
 public:
     typedef std::pair<const Key, T> ValueType;
@@ -42,15 +42,15 @@ public:
         bool operator!=(const Iterator& other) const { return node_ != other.node_; }
         Iterator() : node_(nullptr), tree_(nullptr) {}
     private:
-        friend class AugmentRedBlackTree<Key, T>;
-        Iterator(Node* node, AugmentRedBlackTree<Key, T>* tree) 
+        friend class OrderStatisticsTree<Key, T>;
+        Iterator(Node* node, OrderStatisticsTree<Key, T>* tree) 
             : node_(node), tree_(tree) {}
         Node* node_;
-        AugmentRedBlackTree<Key, T>* tree_;
+        OrderStatisticsTree<Key, T>* tree_;
     };
 
-    AugmentRedBlackTree();
-    ~AugmentRedBlackTree();
+    OrderStatisticsTree();
+    ~OrderStatisticsTree();
     std::pair<Iterator, bool> Insert(const ValueType& value);
     void Delete(Iterator pos);
     void Clear();
@@ -91,7 +91,7 @@ private:
 // ---------- definition ----------
 
 template <class Key, class T>
-AugmentRedBlackTree<Key, T>::AugmentRedBlackTree()
+OrderStatisticsTree<Key, T>::OrderStatisticsTree()
 {
     nil_ = new Node();
     nil_->color = Node::BLACK;
@@ -100,14 +100,14 @@ AugmentRedBlackTree<Key, T>::AugmentRedBlackTree()
 }
 
 template <class Key, class T>
-AugmentRedBlackTree<Key, T>::~AugmentRedBlackTree()
+OrderStatisticsTree<Key, T>::~OrderStatisticsTree()
 {
     Clear();
     delete nil_;
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::LeftRotate(Node* subtree_root_node) 
+void OrderStatisticsTree<Key, T>::LeftRotate(Node* subtree_root_node) 
 {
     Node* new_root;
     new_root = subtree_root_node->right;
@@ -128,7 +128,7 @@ void AugmentRedBlackTree<Key, T>::LeftRotate(Node* subtree_root_node)
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::RightRotate(Node* subtree_root_node) 
+void OrderStatisticsTree<Key, T>::RightRotate(Node* subtree_root_node) 
 {
     Node* new_root;
     new_root = subtree_root_node->left;
@@ -149,7 +149,7 @@ void AugmentRedBlackTree<Key, T>::RightRotate(Node* subtree_root_node)
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Find(const Key& key)
+typename OrderStatisticsTree<Key, T>::Iterator OrderStatisticsTree<Key, T>::Find(const Key& key)
 {
     Node* now;
     now = root_;
@@ -166,7 +166,7 @@ typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Find
 }
  
 template <class Key, class T>
-T& AugmentRedBlackTree<Key, T>::At(const Key& key)
+T& OrderStatisticsTree<Key, T>::At(const Key& key)
 {
     Node* now;
     now = root_;
@@ -183,7 +183,7 @@ T& AugmentRedBlackTree<Key, T>::At(const Key& key)
 }
 
 template <class Key, class T>
-T& AugmentRedBlackTree<Key, T>::operator[](Key&& key)
+T& OrderStatisticsTree<Key, T>::operator[](Key&& key)
 {
     Node *node, **now_ptr, *parent;
     parent = nil_;
@@ -209,8 +209,8 @@ T& AugmentRedBlackTree<Key, T>::operator[](Key&& key)
 }
 
 template <class Key, class T>
-std::pair<typename AugmentRedBlackTree<Key, T>::Iterator, bool> 
-    AugmentRedBlackTree<Key, T>::Insert(const ValueType& value)
+std::pair<typename OrderStatisticsTree<Key, T>::Iterator, bool> 
+    OrderStatisticsTree<Key, T>::Insert(const ValueType& value)
 {
     Node *node, **now_ptr, *parent;
     parent = nil_;
@@ -236,7 +236,7 @@ std::pair<typename AugmentRedBlackTree<Key, T>::Iterator, bool>
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::InsertFixSize(Node* node)
+void OrderStatisticsTree<Key, T>::InsertFixSize(Node* node)
 {
     Node *now;
     now = root_;
@@ -250,22 +250,22 @@ void AugmentRedBlackTree<Key, T>::InsertFixSize(Node* node)
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::InsertFixup(Node* node)
+void OrderStatisticsTree<Key, T>::InsertFixup(Node* node)
 {
     Node *uncle, *grandparent;
-    void(AugmentRedBlackTree<Key, T>::*grandparent_rotate)(Node*);
+    void(OrderStatisticsTree<Key, T>::*grandparent_rotate)(Node*);
     while (node->parent->color == Node::RED)
     {
         grandparent = node->parent->parent;
         if (node->parent == grandparent->left)
         {
             uncle = grandparent->right;
-            grandparent_rotate = &AugmentRedBlackTree<Key, T>::RightRotate;
+            grandparent_rotate = &OrderStatisticsTree<Key, T>::RightRotate;
         }
         else
         {
             uncle = grandparent->left;
-            grandparent_rotate = &AugmentRedBlackTree<Key, T>::LeftRotate;
+            grandparent_rotate = &OrderStatisticsTree<Key, T>::LeftRotate;
         }
         if (uncle->color == Node::RED)
         {
@@ -291,7 +291,7 @@ void AugmentRedBlackTree<Key, T>::InsertFixup(Node* node)
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::Transplant(Node* old_node, Node* new_node)
+void OrderStatisticsTree<Key, T>::Transplant(Node* old_node, Node* new_node)
 {
     if (old_node->parent == nil_)
         root_ = new_node;
@@ -303,7 +303,7 @@ void AugmentRedBlackTree<Key, T>::Transplant(Node* old_node, Node* new_node)
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeMinimum(Node* sub_tree_root)
+typename OrderStatisticsTree<Key, T>::Node* OrderStatisticsTree<Key, T>::TreeMinimum(Node* sub_tree_root)
 {
     while (sub_tree_root->left != nil_)
         sub_tree_root = sub_tree_root->left;
@@ -311,7 +311,7 @@ typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeMin
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeMaximum(Node* sub_tree_root)
+typename OrderStatisticsTree<Key, T>::Node* OrderStatisticsTree<Key, T>::TreeMaximum(Node* sub_tree_root)
 {
     while (sub_tree_root->right != nil_)
         sub_tree_root = sub_tree_root->right;
@@ -319,7 +319,7 @@ typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeMax
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeSuccessor(Node* node)
+typename OrderStatisticsTree<Key, T>::Node* OrderStatisticsTree<Key, T>::TreeSuccessor(Node* node)
 {
     Node* parent;
     if (node->right != this->nil_)
@@ -334,7 +334,7 @@ typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreeSuc
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreePredecessor(Node* node)
+typename OrderStatisticsTree<Key, T>::Node* OrderStatisticsTree<Key, T>::TreePredecessor(Node* node)
 {
     Node* parent;
     if (node->left)
@@ -349,7 +349,7 @@ typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::TreePre
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::Delete(Iterator pos)
+void OrderStatisticsTree<Key, T>::Delete(Iterator pos)
 {
     Node *old, *replaced, *replaced_replaced;
     bool is_black_deleted;
@@ -401,7 +401,7 @@ void AugmentRedBlackTree<Key, T>::Delete(Iterator pos)
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::DeleteFixSize(Node* node)
+void OrderStatisticsTree<Key, T>::DeleteFixSize(Node* node)
 {
     while (node != root_)
     {
@@ -411,7 +411,7 @@ void AugmentRedBlackTree<Key, T>::DeleteFixSize(Node* node)
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::DeleteFixup(Node* node)
+void OrderStatisticsTree<Key, T>::DeleteFixup(Node* node)
 {
     Node* sibling;
     while (node != root_ && node->color == Node::BLACK)
@@ -483,7 +483,7 @@ void AugmentRedBlackTree<Key, T>::DeleteFixup(Node* node)
 }
 
 template <class Key, class T>
-void AugmentRedBlackTree<Key, T>::Clear()
+void OrderStatisticsTree<Key, T>::Clear()
 {
     Node *now, *parent;
     if (root_ == nil_) return;
@@ -508,13 +508,13 @@ void AugmentRedBlackTree<Key, T>::Clear()
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Begin()
+typename OrderStatisticsTree<Key, T>::Iterator OrderStatisticsTree<Key, T>::Begin()
 {
     return Iterator(TreeMinimum(root_), this);
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::End()
+typename OrderStatisticsTree<Key, T>::Iterator OrderStatisticsTree<Key, T>::End()
 {
     return Iterator(nil_, this);
 }
@@ -523,14 +523,14 @@ typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::End(
 
 // recursive
 // template <class Key, class T>
-// typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Select(size_t rank)
+// typename OrderStatisticsTree<Key, T>::Iterator OrderStatisticsTree<Key, T>::Select(size_t rank)
 // {
 //     if (rank <= 0 || rank >= root_->size) throw std::out_of_range("invalid rank");
 //     return Iterator(Select(root_, rank), this);
 // }
 
 // template <class Key, class T>
-// typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::Select
+// typename OrderStatisticsTree<Key, T>::Node* OrderStatisticsTree<Key, T>::Select
 //     (Node* subtree_root_node, size_t rank)
 // {
 //     size_t root_rank;
@@ -542,13 +542,13 @@ typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::End(
 
 // nonrecursive
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Iterator AugmentRedBlackTree<Key, T>::Select(size_t rank)
+typename OrderStatisticsTree<Key, T>::Iterator OrderStatisticsTree<Key, T>::Select(size_t rank)
 {
     return Iterator(Select(root_, rank), this);
 }
 
 template <class Key, class T>
-typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::Select
+typename OrderStatisticsTree<Key, T>::Node* OrderStatisticsTree<Key, T>::Select
     (Node* subtree_root_node, size_t rank)
 {
     size_t root_rank;
@@ -571,13 +571,13 @@ typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::Select
 
 // recursive
 // template <class Key, class T>
-// size_t AugmentRedBlackTree<Key, T>::Rank(Iterator pos)
+// size_t OrderStatisticsTree<Key, T>::Rank(Iterator pos)
 // {
 //     return Rank(pos.node_);
 // }
 
 // template <class Key, class T>
-// size_t AugmentRedBlackTree<Key, T>::Rank(Node* node)
+// size_t OrderStatisticsTree<Key, T>::Rank(Node* node)
 // {
 //     if (node == root_)
 //         return node->left->size + 1;
@@ -589,13 +589,13 @@ typename AugmentRedBlackTree<Key, T>::Node* AugmentRedBlackTree<Key, T>::Select
 
 // nonrecursive
 template <class Key, class T>
-size_t AugmentRedBlackTree<Key, T>::Rank(Iterator pos)
+size_t OrderStatisticsTree<Key, T>::Rank(Iterator pos)
 {
     return Rank(pos.node_);
 }
 
 template <class Key, class T>
-size_t AugmentRedBlackTree<Key, T>::Rank(Node* node)
+size_t OrderStatisticsTree<Key, T>::Rank(Node* node)
 {
     size_t rank;
     rank = node->left->size + 1;
@@ -609,6 +609,6 @@ size_t AugmentRedBlackTree<Key, T>::Rank(Node* node)
 }
 
 template <class Key, class T>
-size_t AugmentRedBlackTree<Key, T>::Size() { return root_->size; }
+size_t OrderStatisticsTree<Key, T>::Size() { return root_->size; }
 
 #endif

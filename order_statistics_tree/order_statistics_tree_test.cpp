@@ -1,11 +1,11 @@
-#include "augment_red_black_tree_test.hpp"
+#include "order_statistics_tree_test.hpp"
 
 #ifndef CATCH_CONFIG_MAIN
 #  define CATCH_CONFIG_MAIN
 #endif
 #include <catch/catch.hpp>
 
-typedef AugmentRedBlackTreeTest<int, char> Tree;
+typedef OrderStatisticsTreeTest<int, char> Tree;
 
 TEST_CASE("osrbt")
 {

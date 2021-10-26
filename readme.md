@@ -6,8 +6,12 @@ This module is a part of [frc123/CLRS-code-solution](https://github.com/frc123/C
 
 ```bash
 .
+├── interval_tree
+│   ├── interval_tree.hpp               # main part of interval tree
+│   ├── interval_tree_test.cpp          # test cases (catch2)
+│   └── interval_tree_test.hpp          # auxiliary test functions
 ├── order_statistics_tree
-│   ├── order_statistics_tree.hpp       # main part of red black tree
+│   ├── order_statistics_tree.hpp       # main part of order statistics tree
 │   ├── order_statistics_tree_test.cpp  # test cases (catch2)
 │   └── order_statistics_tree_test.hpp  # auxiliary test functions
 └── readme.md

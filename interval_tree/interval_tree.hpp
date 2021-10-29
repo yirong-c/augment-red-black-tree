@@ -13,14 +13,12 @@
 template <class Key, class T>
 class IntervalTree
 {
-private:
+public:
     struct Interval
     {
         Key low;
         Key high;
     };
-
-public:
     typedef std::pair<const Interval, T> ValueType;
 
 private:

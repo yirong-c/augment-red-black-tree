@@ -253,38 +253,54 @@ template <class Key, class T>
 void OrderStatisticsTree<Key, T>::InsertFixup(Node* node)
 {
     Node *uncle, *grandparent;
-    void(OrderStatisticsTree<Key, T>::*grandparent_rotate)(Node*);
     while (node->parent->color == Node::RED)
     {
         grandparent = node->parent->parent;
         if (node->parent == grandparent->left)
         {
             uncle = grandparent->right;
-            grandparent_rotate = &OrderStatisticsTree<Key, T>::RightRotate;
+            if (uncle->color == Node::RED)
+            {
+                uncle->color = node->parent->color = Node::BLACK;
+                grandparent->color = Node::RED;
+                node = grandparent;
+            }
+            else
+            {
+                if (node == node->parent->right)
+                {
+                    node = node->parent;
+                    LeftRotate(node);
+                    // notice that varible grandparent do not need to update here,
+                    // since it is still the grandparent of varible node
+                }
+                node->parent->color = Node::BLACK;
+                grandparent->color = Node::RED;
+                RightRotate(grandparent);
+            }
         }
         else
         {
             uncle = grandparent->left;
-            grandparent_rotate = &OrderStatisticsTree<Key, T>::LeftRotate;
-        }
-        if (uncle->color == Node::RED)
-        {
-            uncle->color = node->parent->color = Node::BLACK;
-            grandparent->color = Node::RED;
-            node = grandparent;
-        }
-        else
-        {
-            if (node == node->parent->right)
+            if (uncle->color == Node::RED)
             {
-                node = node->parent;
-                LeftRotate(node);
-                // notice that varible grandparent do not need to update here,
-                // since it is still the grandparent of varible node
+                uncle->color = node->parent->color = Node::BLACK;
+                grandparent->color = Node::RED;
+                node = grandparent;
             }
-            node->parent->color = Node::BLACK;
-            grandparent->color = Node::RED;
-            (this->*grandparent_rotate)(grandparent);
+            else
+            {
+                if (node == node->parent->left)
+                {
+                    node = node->parent;
+                    RightRotate(node);
+                    // notice that varible grandparent do not need to update here,
+                    // since it is still the grandparent of varible node
+                }
+                node->parent->color = Node::BLACK;
+                grandparent->color = Node::RED;
+                LeftRotate(grandparent);
+            }
         }
     }
     root_->color = Node::BLACK;

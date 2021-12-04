@@ -1,6 +1,18 @@
 # augment red black tree
 
-This module is a part of [frc123/CLRS-code-solution](https://github.com/frc123/CLRS-code-solution)
+This module is a part of [frc123/CLRS](https://github.com/frc123/CLRS)
+
+## Description
+
+### Order Statistics Trees
+
+Red-black trees
+that support computation of the rank of an elements in O(lg n).
+
+### Interval Trees
+
+Red-black trees
+that support operations on intervals.
 
 ## File Structure
 
